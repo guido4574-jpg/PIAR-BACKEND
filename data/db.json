@@ -1,0 +1,177 @@
+{
+  "institution": {
+    "name": "Institucion Educativa Reynaldo Matiz",
+    "sede": "Principal",
+    "municipio": "Neiva",
+    "department": "Huila",
+    "teacher": "Yeisson Fabian Reinoso Rodriguez",
+    "year": "2026"
+  },
+  "auth": {
+    "validEmail": "guido4574@gmail.com",
+    "validPassword": "IRMA4574"
+  },
+  "students": [
+    {
+      "id": 1,
+      "nombres": "Carlos Andres",
+      "apellidos": "Rodriguez Gomez",
+      "documento": "1234567890",
+      "fechaNacimiento": "2010-05-15",
+      "grado": "7A",
+      "jornada": "Manana",
+      "discapacidad": "Visual",
+      "diagnostico": "Baja vision moderada",
+      "estado": "activo",
+      "acudiente": "Martha Gomez",
+      "telefono": "3001234567",
+      "contexto": "Vive con su madre y cuenta con acompanamiento familiar permanente.",
+      "valoracion": "Buen desempeno oral, requiere apoyo en lectura de tablero y material impreso.",
+      "fortalezas": ["Excelente memoria auditiva", "Buena comunicacion oral"],
+      "barreras": ["Lectura de tablero", "Material impreso pequeno"],
+      "apoyosRequeridos": ["Material ampliado", "Software lector de pantalla"],
+      "actividadesCasa": "Lectura acompanada con material ampliado tres veces por semana."
+    },
+    {
+      "id": 2,
+      "nombres": "Maria Camila",
+      "apellidos": "Lopez Torres",
+      "documento": "1234567891",
+      "fechaNacimiento": "2011-08-22",
+      "grado": "6B",
+      "jornada": "Tarde",
+      "discapacidad": "Auditiva",
+      "diagnostico": "Hipoacusia neurosensorial bilateral",
+      "estado": "activo",
+      "acudiente": "Jorge Lopez",
+      "telefono": "3019876543",
+      "contexto": "Familia comprometida con el uso de apoyos visuales y seguimiento escolar.",
+      "valoracion": "Aprende mejor con recursos visuales, instrucciones escritas y verificacion de comprension.",
+      "fortalezas": ["Excelente memoria visual", "Participacion activa con apoyos"],
+      "barreras": ["Comprension de audio", "Instrucciones solo orales"],
+      "apoyosRequeridos": ["Subtitulos en videos", "Ubicacion preferencial"],
+      "actividadesCasa": "Revisar vocabulario clave antes de cada clase."
+    },
+    {
+      "id": 3,
+      "nombres": "Ana Sofia",
+      "apellidos": "Ramirez Castro",
+      "documento": "1234567893",
+      "fechaNacimiento": "2010-03-18",
+      "grado": "7B",
+      "jornada": "Manana",
+      "discapacidad": "Cognitiva",
+      "diagnostico": "Discapacidad intelectual leve",
+      "estado": "revision",
+      "acudiente": "Diana Castro",
+      "telefono": "3025557788",
+      "contexto": "Requiere rutinas claras y apoyo de la familia para organizar tareas.",
+      "valoracion": "Necesita metas cortas, material concreto y evaluaciones fragmentadas.",
+      "fortalezas": ["Buena socializacion", "Habilidades artisticas"],
+      "barreras": ["Conceptos abstractos", "Lectura fluida"],
+      "apoyosRequeridos": ["Material simplificado", "Apoyo pedagogico individualizado"],
+      "actividadesCasa": "Practicar lectura funcional con textos cortos y preguntas guiadas."
+    }
+  ],
+  "teachers": [
+    {
+      "id": 1,
+      "nombres": "Yeisson Fabian",
+      "apellidos": "Reinoso Rodriguez",
+      "documento": "800100200",
+      "cargo": "Docente de apoyo",
+      "area": "Educacion inclusiva",
+      "correo": "yeisson.reinoso@colegio.edu.co",
+      "telefono": "3102223344",
+      "perfil": "Lidera seguimiento PIAR, acompanamiento a docentes y articulacion con familias."
+    },
+    {
+      "id": 2,
+      "nombres": "Maria Garcia",
+      "apellidos": "Salazar",
+      "documento": "52000111",
+      "cargo": "Docente",
+      "area": "Matematicas",
+      "correo": "maria.garcia@colegio.edu.co",
+      "telefono": "3114445566",
+      "perfil": "Implementa ajustes didacticos y evaluativos en el aula regular."
+    }
+  ],
+  "piars": [
+    {
+      "id": 1,
+      "studentId": 1,
+      "teacherId": 1,
+      "fechaCreacion": "2026-02-05",
+      "fechaRevision": "2026-06-14",
+      "estado": "activo",
+      "periodo": "Primer semestre",
+      "objetivoGeneral": "Garantizar acceso, participacion y aprendizaje con ajustes razonables.",
+      "metas": "Mejorar comprension lectora de enunciados y resolucion de problemas geometricos.",
+      "ajustes": [
+        {
+          "area": "Matematicas",
+          "tipo": "Didactico y evaluativo",
+          "estrategia": "Material tactil, explicaciones verbales y evaluacion oral cuando sea necesario.",
+          "recursos": "Figuras en relieve, guias ampliadas y calculadora parlante.",
+          "responsable": "Maria Garcia",
+          "avance": 80
+        }
+      ],
+      "proyectos": "Participacion en feria de ciencias con apoyo de material accesible.",
+      "informesSalud": "Control optometrico actualizado aportado por la familia.",
+      "observaciones": [
+        {
+          "id": 1,
+          "fecha": "2026-03-10",
+          "tipo": "Seguimiento",
+          "autor": "Yeisson Fabian",
+          "nota": "Se evidencia mejor participacion cuando recibe la guia antes de la clase.",
+          "avance": 75
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "studentId": 3,
+      "teacherId": 1,
+      "fechaCreacion": "2026-02-12",
+      "fechaRevision": "2026-05-30",
+      "estado": "revision",
+      "periodo": "Primer semestre",
+      "objetivoGeneral": "Fortalecer autonomia academica mediante tareas secuenciadas.",
+      "metas": "Completar actividades de lectura funcional con instrucciones simples.",
+      "ajustes": [
+        {
+          "area": "Lenguaje",
+          "tipo": "Curricular y metodologico",
+          "estrategia": "Reducir extension de textos, usar pictogramas y preguntas de seleccion.",
+          "recursos": "Guias adaptadas, agenda visual y banco de imagenes.",
+          "responsable": "Yeisson Fabian",
+          "avance": 55
+        }
+      ],
+      "proyectos": "Club de lectura con pares tutores.",
+      "informesSalud": "Valoracion neuropsicologica reportada por acudiente.",
+      "observaciones": [
+        {
+          "id": 1,
+          "fecha": "2026-04-18",
+          "tipo": "Alerta",
+          "autor": "Yeisson Fabian",
+          "nota": "Necesita refuerzo en seguimiento de instrucciones de dos pasos.",
+          "avance": 50
+        }
+      ]
+    }
+  ],
+  "reportTypes": [
+    "Seguimiento individual",
+    "PIAR institucional",
+    "Docentes y responsabilidades",
+    "Alertas y revisiones"
+  ],
+  "discapacidades": ["Visual", "Auditiva", "Fisica", "Cognitiva", "Autismo", "Multiple", "Psicosocial", "Otra"],
+  "grados": ["6A", "6B", "7A", "7B", "8A", "8B", "9A", "9B", "10A", "10B", "11A", "11B"],
+  "areas": ["Matematicas", "Lenguaje", "Ciencias Naturales", "Ciencias Sociales", "Ingles", "Educacion Fisica", "Artes", "Tecnologia", "Etica y Valores"]
+}
