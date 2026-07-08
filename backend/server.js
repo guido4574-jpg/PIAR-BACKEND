@@ -1,4 +1,4 @@
-const http = require("http");
+﻿const http = require("http");
 const fs = require("fs/promises");
 const path = require("path");
 const vm = require("vm");
@@ -23,12 +23,14 @@ const server = http.createServer(async (request, response) => {
     try {
         const url = new URL(request.url, `http://${request.headers.host}`);
 
-        if (url.pathname.startsWith("/api")) {
-            await handleApi(request, response, url);
-            return;
-        }
-
-        await serveStatic(response, url.pathname);
+       if (url.pathname === "/") {
+    sendJson(response, 200, {
+        nombre: "PIAR API",
+        version: "1.0",
+        estado: "Activo"
+    });
+    return;
+}
     } catch (error) {
         sendJson(response, 500, { error: "Error interno del servidor", detail: error.message });
     }
