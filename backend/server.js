@@ -49,42 +49,45 @@ async function handleApi(request, response, url) {
         return;
     }
 
-    if (request.method === "GET" && url.pathname === "/api/data") {
-        sendJson(response, 200, await readDb());
-        return;
+   if (request.method === "GET" &&
+    url.pathname === "/api/data") {
+
+    sendJson(response, 200, await readDbFromMysql());
+    return;
     }
 
     if (request.method === "GET" && url.pathname === "/api/estudiantes") {
-    db.query(
-        "SELECT * FROM estudiantes",
-        (err, results) => {
+        getStudentsFromMysql((err, students) => {
             if (err) {
                 sendJson(response, 500, { error: err.message });
                 return;
             }
 
-            sendJson(response, 200, results);
-        }
-    );
-    return;
-}
+            sendJson(response, 200, students);
+        });
+        return;
+    }
 
 if (request.method === "POST" && url.pathname === "/api/estudiantes") {
-    const payload = await readJsonBody(request);
+    const payload = normalizeStudentPayload(await readJsonBody(request));
 
     db.query(
-        "INSERT INTO estudiantes (nombre, documento, grado) VALUES (?, ?, ?)",
-        [payload.nombre, payload.documento, payload.grado],
+        "INSERT INTO estudiante (nombre, documento, edad, curso, condicion_especial) VALUES (?, ?, ?, ?, ?)",
+        [payload.nombre, payload.documento, payload.edad, payload.curso, payload.condicion_especial],
         (err, result) => {
             if (err) {
                 sendJson(response, 500, { error: err.message });
                 return;
             }
 
-            sendJson(response, 201, {
-                id: result.insertId,
-                ...payload
-            });
+            sendJson(response, 201, mapStudentRowToFrontend({
+                id_estudiante: result.insertId,
+                nombre: payload.nombre,
+                documento: payload.documento,
+                edad: payload.edad,
+                curso: payload.curso,
+                condicion_especial: payload.condicion_especial
+            }));
         }
     );
 
@@ -109,11 +112,11 @@ if (request.method === "POST" && url.pathname === "/api/estudiantes") {
    if (request.method === "PUT" && url.pathname.startsWith("/api/estudiantes/")) {
 
     const id = url.pathname.split("/").pop();
-    const payload = await readJsonBody(request);
+    const payload = normalizeStudentPayload(await readJsonBody(request));
 
     db.query(
-        "UPDATE estudiantes SET nombre = ?, documento = ?, grado = ? WHERE id = ?",
-        [payload.nombre, payload.documento, payload.grado, id],
+        "UPDATE estudiante SET nombre = ?, documento = ?, edad = ?, curso = ?, condicion_especial = ? WHERE id_estudiante = ?",
+        [payload.nombre, payload.documento, payload.edad, payload.curso, payload.condicion_especial, id],
         (err, result) => {
 
             if (err) {
@@ -121,10 +124,14 @@ if (request.method === "POST" && url.pathname === "/api/estudiantes") {
                 return;
             }
 
-            sendJson(response, 200, {
-                mensaje: "Estudiante actualizado correctamente",
-                id: id
-            });
+            sendJson(response, 200, mapStudentRowToFrontend({
+                id_estudiante: Number(id),
+                nombre: payload.nombre,
+                documento: payload.documento,
+                edad: payload.edad,
+                curso: payload.curso,
+                condicion_especial: payload.condicion_especial
+            }));
 
         }
     );
@@ -137,7 +144,7 @@ if (request.method === "DELETE" && url.pathname.startsWith("/api/estudiantes/"))
     const id = url.pathname.split("/").pop();
 
     db.query(
-        "DELETE FROM estudiantes WHERE id = ?",
+        "DELETE FROM estudiante WHERE id_estudiante = ?",
         [id],
         (err, result) => {
 
@@ -195,6 +202,182 @@ async function readSeedData() {
     return sandbox.window.APP_DATA;
 }
 
+            /*****************************************************************
+ * OBTENER DATOS DEL SISTEMA DESDE MYSQL
+ *****************************************************************/
+async function readDbFromMysql() {
+    return new Promise((resolve, reject) => {
+
+        getStudentsFromMysql(
+            (err, estudiantes) => {
+
+                if (err) {
+                    reject(err);
+                    return;
+                }
+
+                resolve({
+
+                    /*********************************************************
+                     * DATOS DE LA INSTITUCIÃ“N
+                     *********************************************************/
+                    institution: {
+                        name: "Institucion Educativa Reynaldo Matiz"
+                    },
+
+                    /*********************************************************
+                     * CONFIGURACIÃ“N DE ACCESO
+                     *********************************************************/
+                    auth: {
+                        validEmail: "guido4574@gmail.com",
+                        validPassword: "IRMA4574"
+                    },
+
+                    /*********************************************************
+                     * ESTUDIANTES
+                     *********************************************************/
+                    students: estudiantes,
+
+                    /*********************************************************
+                     * DOCENTES
+                     *********************************************************/
+                    teachers: [],
+
+                    /*********************************************************
+                     * PIAR
+                     *********************************************************/
+                    piars: [],
+
+                    /*********************************************************
+                     * TIPOS DE REPORTES
+                     *********************************************************/
+                    reportTypes: [
+                        "Seguimiento individual",
+                        "PIAR institucional"
+                    ],
+
+                    /*********************************************************
+                     * DISCAPACIDADES
+                     *********************************************************/
+                    discapacidades: [
+                        "Visual",
+                        "Auditiva",
+                        "Fisica",
+                        "Cognitiva"
+                    ],
+
+                    /*********************************************************
+                     * GRADOS
+                     *********************************************************/
+                    grados: [
+                        "6A",
+                        "6B",
+                        "7A",
+                        "7B"
+                    ],
+
+                    /*********************************************************
+                     * ÃREAS
+                     *********************************************************/
+                    areas: [
+                        "Matematicas",
+                        "Lenguaje"
+                    ]
+                });
+
+            }
+        );
+
+    });
+}
+            
+/**
+ * Obtiene estudiantes desde MySQL y los adapta al contrato funcional del frontend.
+ */
+function getStudentsFromMysql(callback) {
+    db.query(
+        "SELECT * FROM estudiante ORDER BY id_estudiante",
+        (err, rows) => {
+            if (err) {
+                callback(err);
+                return;
+            }
+
+            callback(null, rows.map(mapStudentRowToFrontend));
+        }
+    );
+}
+
+/**
+ * Convierte una fila de la tabla estudiante al modelo que consume la SPA oficial.
+ */
+function mapStudentRowToFrontend(row) {
+    const nameParts = splitStudentName(row.nombre);
+    const grade = row.curso || "";
+    const disability = row.condicion_especial || "Por caracterizar";
+
+    return {
+        id: row.id_estudiante,
+        id_estudiante: row.id_estudiante,
+        nombres: nameParts.nombres,
+        apellidos: nameParts.apellidos,
+        nombre: row.nombre,
+        documento: row.documento,
+        fechaNacimiento: "",
+        edad: row.edad ?? "",
+        grado: grade,
+        curso: grade,
+        jornada: "",
+        discapacidad: disability,
+        condicion_especial: disability,
+        diagnostico: disability,
+        estado: "activo",
+        acudiente: "",
+        telefono: "",
+        contexto: "",
+        valoracion: "",
+        fortalezas: [],
+        barreras: [],
+        apoyosRequeridos: [],
+        actividadesCasa: ""
+    };
+}
+
+/**
+ * Normaliza datos recibidos desde frontend nuevo o clientes antiguos antes de persistir.
+ */
+function normalizeStudentPayload(payload) {
+    const fullName = [payload.nombres, payload.apellidos].filter(Boolean).join(" ").trim();
+
+    return {
+        nombre: payload.nombre || fullName,
+        documento: payload.documento,
+        edad: payload.edad || null,
+        curso: payload.curso || payload.grado || null,
+        condicion_especial: payload.condicion_especial || payload.discapacidad || payload.diagnostico || null
+    };
+}
+
+/**
+ * Divide el nombre almacenado actualmente en nombres y apellidos sin modificar MySQL.
+ */
+function splitStudentName(nombre = "") {
+    const parts = nombre.trim().split(/\s+/).filter(Boolean);
+
+    if (parts.length <= 1) {
+        return {
+            nombres: nombre || "Sin nombre",
+            apellidos: ""
+        };
+    }
+
+    const middle = Math.ceil(parts.length / 2);
+
+    return {
+        nombres: parts.slice(0, middle).join(" "),
+        apellidos: parts.slice(middle).join(" ")
+    };
+}
 function sendJson(response, status, data) {
     response.writeHead(status, {
         "Content-Type": "application/json; charset=utf-8",
@@ -221,3 +404,4 @@ function readJsonBody(request) {
         request.on("error", reject);
     });
 }
+
